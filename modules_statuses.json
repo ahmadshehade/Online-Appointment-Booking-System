@@ -1,0 +1,6 @@
+{
+    "Users": true,
+    "Appointments": true,
+    "Payments": true,
+    "Reviews": true
+}
