@@ -18,6 +18,7 @@ class RoleTableSeeder extends Seeder
     public function run(): void
     {
         DB::table('users')->delete();
+
         $user=User::create([
             'name'=>'admin',
             'email'=>'admin@admin',
