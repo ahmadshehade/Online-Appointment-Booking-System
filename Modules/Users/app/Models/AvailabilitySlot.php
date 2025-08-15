@@ -36,6 +36,6 @@ class AvailabilitySlot extends Model
      */
     public function serviceProvider(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'service_provider_id', 'id');
+        return $this->belongsTo(ServiceProvider::class, 'service_provider_id', 'id');
     }
 }

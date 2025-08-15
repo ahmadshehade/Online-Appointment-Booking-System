@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -52,22 +53,13 @@ class User extends Authenticatable
     }
 
     /**
-     * Get all of the comments for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Summary of serviceProviders
+     * @return HasOne<ServiceProvider, User>
      */
-    public function serviceProviders(): HasMany
+    public function serviceProviders(): HasOne
     {
-        return $this->hasMany(ServiceProvider::class);
+        return $this->hasOne(ServiceProvider::class);
     }
 
-    /**
-     * Get all of the comments for the User
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function availabilitySlots(): HasMany
-    {
-        return $this->hasMany(AvailabilitySlot::class);
-    }
+
 }
