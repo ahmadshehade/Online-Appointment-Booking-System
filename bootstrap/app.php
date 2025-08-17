@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (Throwable $e, $request) {
+
+            // Validation errors
             if ($e instanceof \Illuminate\Validation\ValidationException) {
                 return response()->json([
                     'message' => 'The provided data is invalid.',
@@ -23,18 +25,22 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 422);
             }
 
+            // Authentication errors
             if ($e instanceof \Illuminate\Auth\AuthenticationException) {
                 return response()->json([
                     'message' => 'Authentication is required.',
                 ], 401);
             }
 
-            if ($e instanceof \Illuminate\Auth\Access\AuthorizationException) {
+            // Authorization errors (policies/gates or 403 HttpException)
+            if ($e instanceof \Illuminate\Auth\Access\AuthorizationException ||
+                ($e instanceof \Symfony\Component\HttpKernel\Exception\HttpException && $e->getStatusCode() === 403)) {
                 return response()->json([
                     'message' => 'You are not authorized to perform this action.',
                 ], 403);
             }
 
+            // Not found
             if ($e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException ||
                 $e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
                 return response()->json([
@@ -42,12 +48,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], 404);
             }
 
+            // Database errors
             if ($e instanceof \Illuminate\Database\QueryException) {
                 return response()->json([
                     'message' => 'A database error occurred.',
                 ], 500);
             }
 
+            // Fallback for unexpected errors
             return response()->json([
                 'message' => 'An unexpected error occurred.',
             ], 500);

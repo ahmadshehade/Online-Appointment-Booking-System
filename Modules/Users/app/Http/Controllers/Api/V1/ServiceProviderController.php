@@ -26,7 +26,7 @@ class ServiceProviderController extends Controller
      */
     public function index()
     {
-        // $this->authorize("viewAny", ServiceProvider::class);
+        $this->authorize("viewAny", ServiceProvider::class);
         $data = $this->service->getAll($filter = []);
         return $this->successMessage([$data], 'Successfully Get All Providers ', 200);
     }
@@ -40,7 +40,7 @@ class ServiceProviderController extends Controller
     public function store(StoreServiceProviderRequest $request)
     {
 
-        // $this->authorize("create", ServiceProvider::class);
+        $this->authorize("create", ServiceProvider::class);
         $data = $this->service->store($request->validated());
         Log::info('Store data:', $data->toArray());
         return $this->successMessage([$data], 'Successfully Add new Provider', 201);

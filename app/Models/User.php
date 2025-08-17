@@ -56,7 +56,7 @@ class User extends Authenticatable
      * Summary of serviceProviders
      * @return HasOne<ServiceProvider, User>
      */
-    public function serviceProviders(): HasOne
+    public function serviceProvider(): HasOne
     {
         return $this->hasOne(ServiceProvider::class);
     }

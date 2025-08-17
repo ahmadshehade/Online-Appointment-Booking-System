@@ -2,7 +2,10 @@
 
 namespace Modules\Users\Models;
 
+use App\Enum\UserRoles;
 use App\Models\User;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,15 +22,19 @@ class AvailabilitySlot extends Model
     protected $fillable = [
         'day_of_week',
         'start_time',
-        'end_time'
+        'end_time',
+        'service_provider_id'
     ];
 
-    protected $guarded = ['service_provider_id'];
 
-    // protected static function newFactory(): AvailabilitySlotFactory
-    // {
-    //     // return AvailabilitySlotFactory::new();
-    // }
+    /**
+     * Summary of casts
+     * @var array
+     */
+    protected $casts = [
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
+    ];
 
     /**
      * Get the user that owns the AvailabilitySlot
@@ -37,5 +44,20 @@ class AvailabilitySlot extends Model
     public function serviceProvider(): BelongsTo
     {
         return $this->belongsTo(ServiceProvider::class, 'service_provider_id', 'id');
+    }
+
+    /**
+     * Summary of scopForUser
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed $user
+     * @return Builder
+     */
+    public function scopeForUser(Builder $query, $user)
+    {
+
+        if ($user->hasRole(UserRoles::Provider)) {
+            return $query->where('service_provider_id', $user->serviceProvider->id);
+        }
+        return $query;
     }
 }

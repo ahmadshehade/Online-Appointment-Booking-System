@@ -5,6 +5,7 @@ namespace Modules\Users\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Modules\Users\Models\AvailabilitySlot;
 use Modules\Users\Models\ServiceProvider;
 
 class StoreServiceProviderRequest extends FormRequest
@@ -14,7 +15,7 @@ class StoreServiceProviderRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('create',ServiceProvider::class);
     }
 
     /**
@@ -36,7 +37,7 @@ class StoreServiceProviderRequest extends FormRequest
     public function messages(): array
     {
         return [
-        
+
 
             'phone.required' => 'The phone number is required.',
             'phone.string' => 'The phone number must be a string.',
