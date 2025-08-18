@@ -23,12 +23,24 @@ class RoleAndPermissionController extends Controller
         $this->permissionRole = $permissionRole;
     }
 
+    /**
+     * Summary of assignRoleToUser
+     * @param \App\Models\User $user
+     * @param \Spatie\Permission\Models\Role $role
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function assignRoleToUser(User $user, Role $role)
     {
         $this->permissionRole->assignRoleToUser($user, $role);
         return $this->successMessage(['success' => true], 'SuccessFully Assigned Role To User', 200);
     }
 
+    /**
+     * Summary of removeRoleFromUser
+     * @param \App\Models\User $user
+     * @param \Spatie\Permission\Models\Role $role
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function removeRoleFromUser(User $user, Role $role)
     {
         $this->permissionRole->removeRoleFromUser($user, $role);
@@ -39,7 +51,7 @@ class RoleAndPermissionController extends Controller
      * Summary of assignPermissionToUser
      * @param \App\Models\User $user
      * @param \Spatie\Permission\Models\Permission $permission
-     * @return void
+     * @return \Illuminate\Http\JsonResponse
      */
     public function assignPermissionToUser(User $user, Permission $permission)
     {
