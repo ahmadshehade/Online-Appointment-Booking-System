@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Modules\Appointments\Models\Appointment;
 
 // use Modules\Users\Database\Factories\AvailabilitySlotFactory;
 
@@ -59,5 +60,15 @@ class AvailabilitySlot extends Model
             return $query->where('service_provider_id', $user->serviceProvider->id);
         }
         return $query;
+    }
+
+
+    /**
+     * Summary of ppointments
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany<Appointment, AvailabilitySlot>
+     */
+    public function apointments()
+    {
+        return $this->hasMany(Appointment::class);
     }
 }

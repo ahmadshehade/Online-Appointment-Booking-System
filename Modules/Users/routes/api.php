@@ -6,9 +6,24 @@ use Modules\Users\Http\Controllers\Api\V1\ServiceProviderController;
 use Modules\Users\Http\Controllers\UsersController;
 
 
+/*
+|--------------------------------------------------------------------------
+| API Routes
+|--------------------------------------------------------------------------
+|
+| Here we define all API routes that require authentication using Sanctum.
+| Every route inside this group is protected and requires a valid token.
+|
+*/
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
+    /**
+     * ------------------------------------------------------------------------
+     * Provider Routes[]
+     * ------------------------------------------------------------------------
+     * Routes for managing service providers.
+     */
     Route::prefix('provider')->group(function () {
 
         Route::get('/all/{filters?}', [ServiceProviderController::class, 'index'])
@@ -31,6 +46,14 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 
+
+    /**
+     * ------------------------------------------------------------------------
+     * Availability Slot Routes
+     * ------------------------------------------------------------------------
+     * Routes for managing availability slots for service providers.
+     * Prefix: /slot
+     */
     Route::prefix('slot')->group(function () {
         Route::post('/make', [AvailabilitySlotController::class, 'store'])
             ->name('slot.make');

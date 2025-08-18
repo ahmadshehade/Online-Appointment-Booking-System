@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Modules\Appointments\Models\Appointment;
+use Modules\Reviews\Models\Review;
 use Modules\Users\Models\AvailabilitySlot;
 use Modules\Users\Models\ServiceProvider;
 use Spatie\Permission\Traits\HasRoles;
@@ -61,5 +63,21 @@ class User extends Authenticatable
         return $this->hasOne(ServiceProvider::class);
     }
 
+    /**
+     * Summary of appointments
+     * @return HasMany<Appointment, User>
+     */
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class);
+    }
 
+    /**
+     * Summary of reviews
+     * @return HasMany<Review, User>
+     */
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }
