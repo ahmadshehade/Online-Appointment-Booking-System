@@ -43,6 +43,7 @@ class CategoryService  extends BaseService
      */
     public function store(array $data): Model|\Illuminate\Http\JsonResponse
     {
+        Cache::forget('categories.all');
         return  parent::store($data);
     }
 
@@ -53,6 +54,7 @@ class CategoryService  extends BaseService
      */
     public function update(array $data, Model $model)
     {
+        Cache::forget('categories.all');
         return parent::update($data, $model);
     }
 
@@ -62,6 +64,7 @@ class CategoryService  extends BaseService
      */
     public function destroy(Model $model)
     {
+        Cache::forget('categories.all');
         return parent::destroy($model);
     }
 }
