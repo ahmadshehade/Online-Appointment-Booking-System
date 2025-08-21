@@ -3,9 +3,21 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Appointments\Http\Controllers\AppointmentsController;
 use Modules\Appointments\Http\Controllers\CategoryController;
+use Modules\Appointments\Http\Controllers\ServiceController;
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
+    /*
+    |--------------------------------------------------------------------------
+    | Category Routes
+    |--------------------------------------------------------------------------
+    */
     Route::apiResource('categories', CategoryController::class);
-    
+
+    /*
+    |--------------------------------------------------------------------------
+    | Service Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::apiResource('services', ServiceController::class);
 });

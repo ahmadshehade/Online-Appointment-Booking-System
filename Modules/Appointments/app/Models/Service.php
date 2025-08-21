@@ -2,8 +2,12 @@
 
 namespace Modules\Appointments\Models;
 
+use App\Enum\UserRoles;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
 use Modules\Users\Models\ServiceProvider;
 
 // use Modules\Appointments\Database\Factories\ServiceFactory;
@@ -24,6 +28,9 @@ class Service extends Model
     ];
 
 
+    protected $casts = [
+        'price' => 'decimal:2',
+    ];
 
     // protected static function newFactory(): ServiceFactory
     // {
@@ -57,5 +64,43 @@ class Service extends Model
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+
+
+    /**
+     * Summary of scopeGetServices
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param mixed $user
+     * @return Builder
+     */
+    public  function  scopeGetServices(Builder $query, $user)
+    {
+        if ($user->hasRole(UserRoles::Provider)) {
+            return $query->where('service_provider_id', $user->serviceProvider->id)
+                ->orderBy('created_at', 'desc');
+        } else {
+            return $query->orderBy('created_at', 'desc');
+        }
+    }
+
+    /**
+     * Summary of getCreatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('y-m-d H:i:s');
+    }
+
+    /**
+     * Summary of getUpdatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('y-m-d H:i:s');
     }
 }
