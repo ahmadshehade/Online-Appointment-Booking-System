@@ -2,9 +2,11 @@
 
 use App\Enum\UserRoles;
 use App\Http\Controllers\Api\V1\Admin\RoleAndPermissionController;
+use App\Http\Controllers\Api\V1\User\UserController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Auth\PasswordResetController;
 use Illuminate\Support\Facades\Route;
+use Modules\Users\Http\Controllers\UsersController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,4 +63,17 @@ Route::prefix('admin')->middleware(['auth:sanctum', 'can:access-admin'])->group(
     Route::get('users/{user}/permissions', [RoleAndPermissionController::class, 'getUserPermissions']);
     Route::get('users/{user}/permissions/check/{permissionName}', [RoleAndPermissionController::class, 'userHasPermission']);
     Route::post('permissions/create/{permissionName}', [RoleAndPermissionController::class, 'createPermission']);
+});
+
+// ----------------------
+// User Management
+//----------------------
+
+Route::middleware(['auth:sanctum'])->group(function () {
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'index']);
+        Route::get('/{user}', [UserController::class, 'show']);
+        Route::put('/{user}', [UserController::class, 'update']);
+        Route::delete('/{user}', [UserController::class, 'destroy']);
+    });
 });
