@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\Appointments\Models\Coupon;
 use Modules\Appointments\Models\Service;
 use Modules\Reviews\Models\Review;
 
@@ -70,5 +71,14 @@ class ServiceProvider extends Model
     public function reviews()
     {
         return $this->hasMany(Review::class);
+    }
+
+    /**
+     * Summary of coupons
+     * @return HasMany<Coupon, ServiceProvider>
+     */
+    public function coupons()
+    {
+        return $this->hasMany(Coupon::class);
     }
 }

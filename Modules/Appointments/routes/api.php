@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Appointments\Http\Controllers\AppointmentsController;
 use Modules\Appointments\Http\Controllers\CategoryController;
+use Modules\Appointments\Http\Controllers\CouponsController;
 use Modules\Appointments\Http\Controllers\ServiceController;
 
 Route::middleware(['auth:sanctum'])->group(function () {
@@ -20,4 +21,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::apiResource('services', ServiceController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Coupon Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::apiResource('coupons', CouponsController::class);
 });

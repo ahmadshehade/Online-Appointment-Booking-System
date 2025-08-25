@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Modules\Users\Models\ServiceProvider;
 
 // use Modules\Appointments\Database\Factories\CouponFactory;
 
@@ -19,7 +20,8 @@ class Coupon extends Model
     protected $fillable = [
         'discount',
         'code',
-        'expires_at'
+        'expires_at',
+        'service_provider_id'
     ];
 
     protected $casts = [
@@ -39,10 +41,18 @@ class Coupon extends Model
      * Summary of appointments
      * @return BelongsToMany<Appointment, Coupon, \Illuminate\Database\Eloquent\Relations\Pivot>
      */
-    public function appointments():BelongsToMany
+    public function appointments(): BelongsToMany
     {
-        return $this->belongsToMany(Appointment::class,'coupon_appointment');
+        return $this->belongsToMany(Appointment::class, 'coupon_appointment');
     }
 
-   
+
+    /**
+     * Summary of serviceProvider
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo<ServiceProvider, Coupon>
+     */
+    public function serviceProvider()
+    {
+        return $this->belongsTo(ServiceProvider::class, 'service_provider_id', 'id');
+    }
 }

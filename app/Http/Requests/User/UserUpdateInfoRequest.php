@@ -5,13 +5,18 @@ namespace App\Http\Requests\User;
 use App\Rules\ChangeActiveRole;
 use App\Rules\ChangeStatusRole;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class UserUpdateInfoRequest extends FormRequest
 {
+    /**
+     * Summary of authorize
+     * @return bool
+     */
     public function authorize(): bool
     {
-        return true;
+        return Gate::allows('update', $this->user());
     }
 
     public function rules(): array
@@ -35,7 +40,7 @@ class UserUpdateInfoRequest extends FormRequest
             'name'     => 'user name',
             'email'    => 'email address',
             'password' => 'password',
-            'status'   => 'status',
+            'active'   => 'Active',
         ];
     }
 
@@ -56,7 +61,7 @@ class UserUpdateInfoRequest extends FormRequest
             'password.min'       => 'The :attribute must be at least :min characters.',
             'password.max'       => 'The :attribute may not be greater than :max characters.',
 
-            'status.boolean'     => 'The :attribute field must be true or false.',
+            'active.boolean'     => 'The :attribute field must be true or false.',
         ];
     }
 }

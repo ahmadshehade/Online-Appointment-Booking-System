@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('availability_slots', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('service_provider_id')->constrained('service_providers')->cascadeOnDelete();
+            $table->foreignId('service_provider_id')->nullable()->constrained('service_providers')->cascadeOnDelete();
             $table->enum('day_of_week', ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']);
             $table->time('start_time');
             $table->time('end_time');

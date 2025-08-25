@@ -90,7 +90,7 @@ class AvailabilitySlotService extends BaseService
      */
     public function  store(array $data): Model
     {
-        $data['service_provider_id'] = Auth::user()->id;
+        $data['service_provider_id'] = Auth::user()->serviceProvider->id;
         return parent::store($data);
     }
     /**
