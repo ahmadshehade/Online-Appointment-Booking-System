@@ -28,4 +28,11 @@ Route::middleware(['auth:sanctum'])->group(function () {
     |--------------------------------------------------------------------------
     */
     Route::apiResource('coupons', CouponsController::class);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Coupon Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::apiResource('appointments', AppointmentsController::class);
 });

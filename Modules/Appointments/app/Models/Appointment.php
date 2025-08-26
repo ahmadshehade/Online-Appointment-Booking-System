@@ -2,9 +2,13 @@
 
 namespace Modules\Appointments\Models;
 
+use App\Enum\UserRoles;
 use App\Models\User;
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Auth;
+use Modules\Appointments\Enum\AppointmentStatus;
 use Modules\Payments\Models\Payment;
 use Modules\Users\Models\AvailabilitySlot;
 
@@ -29,6 +33,10 @@ class Appointment extends Model
     //     // return AppointmentFactory::new();
     // }
 
+
+    protected  $casts = [
+        'status' => AppointmentStatus::class
+    ];
 
     /**
      * Summary of service
@@ -56,7 +64,7 @@ class Appointment extends Model
     {
         return $this->belongsTo(AvailabilitySlot::class, 'availability_slot_id');
     }
-  
+
     /**
      * Summary of coupons
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany<Coupon, Appointment, \Illuminate\Database\Eloquent\Relations\Pivot>
@@ -73,5 +81,37 @@ class Appointment extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+
+    /**
+     * Summary of booted
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope('user_item', function (Builder $builder) {
+            if ($user = Auth::user()) {
+                /** @var \App\Models\User $user */
+                if ($user->hasRole(UserRoles::SuperAdmin)) {
+                    return;
+                }
+                if ($user->hasRole(UserRoles::Client)) {
+                    $builder->where('user_id', $user->id);
+                    return;
+                }
+                if ($user->hasRole(UserRoles::Provider)) {
+                    if ($user->serviceProvider) {
+                        $builder->whereHas('service', function ($q) use ($user) {
+                            $q->where('service_provider_id', $user->serviceProvider->id);
+                        });
+                    } else {
+                        $builder->whereRaw('0=1');
+                    }
+                    return;
+                }
+                $builder->whereRaw('0=1');
+            }
+        });
     }
 }

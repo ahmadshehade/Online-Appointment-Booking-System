@@ -3,54 +3,80 @@
 namespace Modules\Appointments\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Modules\Appointments\Http\Requests\Appointments\AppointmentStoreRequest;
+use Modules\Appointments\Http\Requests\Appointments\AppointmentUpdateRequest;
+use Modules\Appointments\Models\Appointment;
+use Modules\Appointments\Services\AppointmentService;
 
 class AppointmentsController extends Controller
 {
+    use AuthorizesRequests;
+    protected AppointmentService $appointmentService;
+
+    /**
+     * Summary of __construct
+     * @param \Modules\Appointments\Services\AppointmentService $appointmentService
+     */
+    public function __construct(AppointmentService $appointmentService)
+    {
+        $this->appointmentService = $appointmentService;
+    }
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return view('appointments::index');
+        $this->authorize("viewAny", Appointment::class);
+    
+        $filters = $request->only(['service_id', 'user_id']);
+        $data = $this->appointmentService->getAll($filters);
+    
+        return $this->successMessage([$data], 'Successfully Get All Appointments ', 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        return view('appointments::create');
-    }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) {}
+    public function store(AppointmentStoreRequest $request)
+    {
+        $this->authorize('create', Appointment::class);
+        $data = $this->appointmentService->store($request->validated());
+        return $this->successMessage([$data], 'Successfully Add  new Appointment', 201);
+    }
 
     /**
      * Show the specified resource.
      */
-    public function show($id)
+    public function show(Appointment $appointment)
     {
-        return view('appointments::show');
+        $this->authorize('view', $appointment);
+        $data = $this->appointmentService->get($appointment);
+        return $this->successMessage([$data], 'Successfully Get Appointment', 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
-    {
-        return view('appointments::edit');
-    }
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, $id) {}
+    public function update(AppointmentUpdateRequest $request, Appointment $appointment)
+    {
+        $this->authorize('update', $appointment);
+        $data = $this->appointmentService->update($request->validated(), $appointment);
+        return $this->successMessage([$data], 'Successfully Update Appointment', 200);
+    }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($id) {}
+    public function destroy(Appointment $appointment)
+    {
+        $this->authorize('delete', $appointment);
+        $this->appointmentService->destroy($appointment);
+
+        return $this->successMessage(['success' => true], 'Successfully Delete  Appointment', 200);
+    }
 }

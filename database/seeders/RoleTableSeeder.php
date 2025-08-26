@@ -17,21 +17,25 @@ class RoleTableSeeder extends Seeder
      */
     public function run(): void
     {
-        DB::table('users')->delete();
 
-        $user=User::create([
-            'name'=>'admin',
-            'email'=>'admin@admin',
-            'password'=>Hash::make('123123123')
+        DB::table("users")->delete();
+
+        $user = User::create([
+            'name' => 'admin',
+            'email' => 'admin@admin',
+            'password' => Hash::make('123123123')
         ]);
 
-       foreach(UserRoles::cases() as $roleData){
-        Role::firstOrCreate([
-            'name'=>$roleData,
-            'guard_name'=>'web'
-        ]);
-       }
+        foreach (UserRoles::cases() as $roleData) {
+            Role::firstOrCreate([
+                'name' => $roleData,
+                'guard_name' => 'web'
+            ]);
+        }
 
         $user->assignRole(UserRoles::SuperAdmin->value);
+
+
+        User::factory(10)->create();
     }
 }
