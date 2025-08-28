@@ -2,6 +2,7 @@
 
 namespace Modules\Appointments\Models;
 
+use Database\Factories\CouponFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -31,10 +32,10 @@ class Coupon extends Model
 
 
 
-    // protected static function newFactory(): CouponFactory
-    // {
-    //     // return CouponFactory::new();
-    // }
+    protected static function newFactory(): CouponFactory
+    {
+        return CouponFactory::new();
+    }
 
 
     /**

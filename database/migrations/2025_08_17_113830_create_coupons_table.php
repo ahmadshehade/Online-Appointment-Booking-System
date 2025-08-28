@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('coupons', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('service_provider_id')->nullable()->constrained('service_providers')->cascadeOnDelete();
+            $table->foreignId('service_provider_id')->constrained('service_providers')->cascadeOnDelete();
             $table->string('code')->unique();
             $table->decimal('discount', 5, 2);
             $table->date('expires_at')->nullable();

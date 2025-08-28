@@ -4,6 +4,7 @@ namespace Modules\Appointments\Models;
 
 use App\Enum\UserRoles;
 use App\Models\User;
+use Database\Factories\AppointmentFactory;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,10 +29,14 @@ class Appointment extends Model
         'status'
     ];
 
-    // protected static function newFactory(): AppointmentFactory
-    // {
-    //     // return AppointmentFactory::new();
-    // }
+    /**
+     * Summary of newFactory
+     * @return AppointmentFactory
+     */
+    protected static function newFactory(): AppointmentFactory
+    {
+        return AppointmentFactory::new();
+    }
 
 
     protected  $casts = [

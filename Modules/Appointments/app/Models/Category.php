@@ -3,6 +3,7 @@
 namespace Modules\Appointments\Models;
 
 use Carbon\Carbon;
+use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 // use Modules\Appointments\Database\Factories\CategoryFactory;
@@ -18,6 +19,14 @@ class Category extends Model
         'name'
     ];
 
+    /**
+     * Summary of newFactory
+     * @return CategoryFactory
+     */
+    protected static function newFactory()
+    {
+        return CategoryFactory::new();
+    }
 
     /**
      * Summary of getCreatedAtAttribute
@@ -41,11 +50,7 @@ class Category extends Model
 
 
 
-
-    // protected static function newFactory(): CategoryFactory
-    // {
-    //     // return CategoryFactory::new();
-    // }
+      
 
 
     /**

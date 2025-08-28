@@ -4,6 +4,7 @@ namespace Modules\Appointments\Models;
 
 use App\Enum\UserRoles;
 use Carbon\Carbon;
+use Database\Factories\ServiceFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -32,10 +33,15 @@ class Service extends Model
         'price' => 'decimal:2',
     ];
 
-    // protected static function newFactory(): ServiceFactory
-    // {
-    //     // return ServiceFactory::new();
-    // }
+    /**
+     * 
+     * 
+     * @return ServiceFactory
+     */
+    protected static function newFactory(): ServiceFactory
+    {
+        return ServiceFactory::new();
+    }
 
 
 

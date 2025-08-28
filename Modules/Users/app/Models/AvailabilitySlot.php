@@ -5,6 +5,7 @@ namespace Modules\Users\Models;
 use App\Enum\UserRoles;
 use App\Models\User;
 use Carbon\Carbon;
+use Database\Factories\AvailabilitySlotFactory;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,6 +18,15 @@ class AvailabilitySlot extends Model
 {
     use HasFactory;
 
+
+    /**
+     * Summary of newFactory
+     * @return AvailabilitySlotFactory
+     */
+    protected static function newFactory()
+    {
+        return AvailabilitySlotFactory::new();
+    }
     /**
      * The attributes that are mass assignable.
      */
