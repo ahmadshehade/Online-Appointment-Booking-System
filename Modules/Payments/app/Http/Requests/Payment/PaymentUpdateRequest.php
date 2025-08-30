@@ -4,6 +4,7 @@ namespace Modules\Payments\Http\Requests\Payment;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Gate;
+use Modules\Payments\Rules\ChangePaymentStatus;
 
 class PaymentUpdateRequest extends FormRequest
 {
@@ -12,9 +13,11 @@ class PaymentUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+        $payment = $this->route("payment");
         return [
             "appointment_id" => ['sometimes', 'integer', 'exists:appointments,id'],
             "amount"         => ['sometimes', 'numeric', 'min:0.01'],
+            "status" => ['sometimes', 'in:failed,pending,completed', new ChangePaymentStatus($payment->id)]
         ];
     }
 

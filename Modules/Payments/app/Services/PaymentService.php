@@ -39,7 +39,8 @@ class PaymentService extends BaseService
      * Summary of get
      * @param \Illuminate\Database\Eloquent\Model $model
      */
-    public function get(Model $model) {
+    public function get(Model $model)
+    {
         return parent::get($model);
     }
 
@@ -54,7 +55,7 @@ class PaymentService extends BaseService
         $servicePrice = $appointment->service->price;
         $paidSoFar = $appointment->payments()->sum('amount');
         $totalPaid = $paidSoFar + $data['amount'];
-        $overAmount = $totalPaid - $servicePrice;
+        $overAmount =  $totalPaid -$servicePrice;
         if ($totalPaid > $servicePrice) {
             throw new HttpResponseException(
                 response()->json([
@@ -63,9 +64,15 @@ class PaymentService extends BaseService
                 ])
             );
         }
+        if($overAmount==0){
+            $data['status']='completed';
+        }
+
+    
         $payment = parent::store($data);
         $payment->partial   = $totalPaid < $servicePrice;
         $payment->remaining = max($servicePrice - $totalPaid, 0);
+        
 
         return $payment;
     }
@@ -104,10 +111,13 @@ class PaymentService extends BaseService
                 'message' => "You are paying more than required. Service price: {$servicePrice}, already paid: {$paidSoFar}, trying to pay: {$newAmount}. Overpayment: " . ($totalPaid - $servicePrice)
             ], 422));
         }
-
+        if ($totalPaid == $servicePrice) {
+            $data['status'] = 'completed';
+        }
         $payment = parent::update($data, $model);
         $payment->partial   = $totalPaid < $servicePrice;
         $payment->remaining = max($servicePrice - $totalPaid, 0);
+        
 
         return $payment;
     }
