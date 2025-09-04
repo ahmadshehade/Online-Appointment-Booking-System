@@ -26,6 +26,8 @@ class AvailabilitySlotPolicy
 
     /**
      * Determine whether the user can view any availability slots.
+     *
+     * Only providers should see the list of their own slots.
      */
     public function viewAny(User $user)
     {
@@ -34,11 +36,21 @@ class AvailabilitySlotPolicy
 
     /**
      * Determine whether the user can view a specific availability slot.
+     *
+     * - Providers can only see their own slots.
+     * - Clients can see slots (to be able to book them).
      */
     public function view(User $user, AvailabilitySlot $availabilitySlot)
     {
-        return $user->hasRole(UserRoles::Provider) &&
-            $user->serviceProvider->id == $availabilitySlot->service_provider_id;
+        if ($user->hasRole(UserRoles::Provider)) {
+            return $user->serviceProvider->id === $availabilitySlot->service_provider_id;
+        }
+
+        if ($user->hasRole(UserRoles::Client)) {
+            return true; 
+        }
+
+        return false;
     }
 
     /**
@@ -55,7 +67,7 @@ class AvailabilitySlotPolicy
     public function update(User $user, AvailabilitySlot $availabilitySlot)
     {
         return $user->hasRole(UserRoles::Provider) &&
-            $user->serviceProvider->id == $availabilitySlot->service_provider_id;
+            $user->serviceProvider->id === $availabilitySlot->service_provider_id;
     }
 
     /**
@@ -64,7 +76,7 @@ class AvailabilitySlotPolicy
     public function delete(User $user, AvailabilitySlot $availabilitySlot)
     {
         return $user->hasRole(UserRoles::Provider) &&
-            $user->serviceProvider->id == $availabilitySlot->service_provider_id;
+            $user->serviceProvider->id === $availabilitySlot->service_provider_id;
     }
 
     /**
@@ -72,7 +84,7 @@ class AvailabilitySlotPolicy
      */
     public function restore(User $user, AvailabilitySlot $availabilitySlot)
     {
-        //
+        return false; 
     }
 
     /**
@@ -80,6 +92,6 @@ class AvailabilitySlotPolicy
      */
     public function forceDelete(User $user, AvailabilitySlot $availabilitySlot)
     {
-        //
+        return false; 
     }
 }

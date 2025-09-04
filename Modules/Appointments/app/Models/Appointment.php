@@ -4,6 +4,7 @@ namespace Modules\Appointments\Models;
 
 use App\Enum\UserRoles;
 use App\Models\User;
+use Carbon\Carbon;
 use Database\Factories\AppointmentFactory;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -118,5 +119,26 @@ class Appointment extends Model
                 $builder->whereRaw('0=1');
             }
         });
+    }
+
+
+    /**
+     * Summary of getCreatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('y-m-d H:i:s');
+    }
+
+    /**
+     * Summary of getUpdatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('y-m-d H:i:s');
     }
 }

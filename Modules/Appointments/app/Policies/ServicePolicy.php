@@ -91,16 +91,22 @@ class ServicePolicy
      * 
      * @param \App\Models\User $user
      * @param \Modules\Appointments\Models\Service $service
-     * @return void
+     * @return bool
      */
-    public function restore(User $user, Service $service) {}
+    public function restore(User $user, Service $service)
+    {
+        return false;
+    }
 
 
     /**
      * Summary of forceDelete
      * @param \App\Models\User $user
      * @param \Modules\Appointments\Models\Service $service
-     * @return void
+     * @return bool
      */
-    public function forceDelete(User $user, Service $service) {}
+    public function forceDelete(User $user, Service $service)
+    {
+        return false;
+    }
 }

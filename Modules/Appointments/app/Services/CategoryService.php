@@ -21,9 +21,9 @@ class CategoryService  extends BaseService
 
     public function getAll(array $filters = [])
     {
-        $cacheKey = 'categories.all';
+        $cacheKey = 'categories.index.'.md5(json_encode($filters));
         $cacheTTL = 3600;
-        return Cache::remember($cacheKey, $cacheTTL, function () use ($filters) {
+        return Cache::tags('categories')->remember($cacheKey, $cacheTTL, function () use ($filters) {
             return parent::getAll($filters);
         });
     }
@@ -43,7 +43,7 @@ class CategoryService  extends BaseService
      */
     public function store(array $data): Model|\Illuminate\Http\JsonResponse
     {
-        Cache::forget('categories.all');
+        Cache::tags('categories')->flush();
         return  parent::store($data);
     }
 
@@ -54,7 +54,7 @@ class CategoryService  extends BaseService
      */
     public function update(array $data, Model $model)
     {
-        Cache::forget('categories.all');
+        Cache::tags('categories')->flush();
         return parent::update($data, $model);
     }
 
@@ -64,7 +64,7 @@ class CategoryService  extends BaseService
      */
     public function destroy(Model $model)
     {
-        Cache::forget('categories.all');
+        Cache::tags('categories')->flush();
         return parent::destroy($model);
     }
 }

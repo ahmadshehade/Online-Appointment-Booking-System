@@ -7,6 +7,7 @@ use Modules\Reviews\Models\Review;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class ReviewService extends BaseService
 {
@@ -26,7 +27,10 @@ class ReviewService extends BaseService
      */
     public function getAll(array $filters = [])
     {
-        return parent::getAll($filters);
+        $cacheKey = 'reviews.index' . md5(json_encode($filters));
+        Cache::tags(['reviews'])->remember($cacheKey, 3600, function () use ($filters) {
+            return parent::getAll($filters);
+        });
     }
 
     /**
@@ -45,6 +49,7 @@ class ReviewService extends BaseService
      */
     public function store(array $data): Model|JsonResponse
     {
+        Cache::tags(['reviews'])->flush();
         $data['user_id'] = Auth::id();
         return parent::store($data);
     }
@@ -56,6 +61,7 @@ class ReviewService extends BaseService
      */
     public function update(array $data, Model $model)
     {
+        Cache::tags(['reviews'])->flush();
         return parent::update($data, $model);
     }
 
@@ -65,6 +71,7 @@ class ReviewService extends BaseService
      */
     public  function destroy(Model $model)
     {
+        Cache::tags(['reviews'])->flush();
         return parent::destroy($model);
     }
 }

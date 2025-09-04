@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Payments\Http\Controllers;
+namespace Modules\Payments\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -28,6 +28,7 @@ class PaymentsController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('viewAny', Payment::class);
         $filters = $request->only(['appointment_id', 'status']);
 
         return $this->successMessage(

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Reviews\Http\Controllers\ReviewsController;
+use Modules\Reviews\Http\Controllers\Api\V1\ReviewsController;
 
 Route::middleware(['auth:sanctum'])->group(function () {
     /*

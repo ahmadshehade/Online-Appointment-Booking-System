@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Auth;
 use Modules\Appointments\Models\Appointment;
 
 // use Modules\Users\Database\Factories\AvailabilitySlotFactory;
@@ -57,20 +58,25 @@ class AvailabilitySlot extends Model
         return $this->belongsTo(ServiceProvider::class, 'service_provider_id', 'id');
     }
 
-    /**
-     * Summary of scopForUser
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param mixed $user
-     * @return Builder
-     */
-    public function scopeForUser(Builder $query, $user)
-    {
 
-        if ($user->hasRole(UserRoles::Provider)) {
-            return $query->where('service_provider_id', $user->serviceProvider->id);
-        }
-        return $query;
+
+    /**
+     * Summary of booted
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::addGlobalScope('view-scope', function ($query) {
+            /**
+             * @var \App\Models\User as $user
+             */
+            $user = Auth::user();
+            if ($user && $user->hasRole(UserRoles::Provider)) {
+                $query->where('service_provider_id', $user->serviceProvider->id);
+            }
+        });
     }
+
 
 
     /**
@@ -80,5 +86,26 @@ class AvailabilitySlot extends Model
     public function apointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+
+    /**
+     * Summary of getCreatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Summary of getUpdatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

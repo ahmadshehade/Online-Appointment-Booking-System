@@ -47,12 +47,6 @@ class Category extends Model
     {
         return Carbon::parse($value)->format('Y-m-d H:i:s');
     }
-
-
-
-      
-
-
     /**
      * Summary of services
      * @return \Illuminate\Database\Eloquent\Relations\HasMany<Service, Category>

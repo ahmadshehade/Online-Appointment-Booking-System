@@ -3,6 +3,7 @@
 namespace Modules\Users\Models;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Database\Factories\ServiceProviderFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -91,5 +92,26 @@ class ServiceProvider extends Model
     public function coupons()
     {
         return $this->hasMany(Coupon::class);
+    }
+
+
+    /**
+     * Summary of getCreatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Summary of getUpdatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

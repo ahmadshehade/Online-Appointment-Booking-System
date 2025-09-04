@@ -3,6 +3,7 @@
 namespace Modules\Payments\Models;
 
 use App\Enum\UserRoles;
+use Carbon\Carbon;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -68,5 +69,25 @@ class Payment extends Model
                 });
             }
         });
+    }
+
+    /**
+     * Summary of getCreatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('y-m-d H:i:s');
+    }
+
+    /**
+     * Summary of getUpdatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('y-m-d H:i:s');
     }
 }

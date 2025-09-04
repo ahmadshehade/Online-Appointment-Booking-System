@@ -2,6 +2,7 @@
 
 namespace Modules\Appointments\Models;
 
+use Carbon\Carbon;
 use Database\Factories\CouponFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -55,5 +56,26 @@ class Coupon extends Model
     public function serviceProvider()
     {
         return $this->belongsTo(ServiceProvider::class, 'service_provider_id', 'id');
+    }
+
+
+    /**
+     * Summary of getCreatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Summary of getUpdatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
     }
 }

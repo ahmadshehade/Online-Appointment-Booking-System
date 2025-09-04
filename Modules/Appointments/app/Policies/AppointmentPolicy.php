@@ -108,7 +108,7 @@ class AppointmentPolicy
      */
     public function restore(User $user, Appointment $appointment)
     {
-        //
+        return false;
     }
 
     /**
@@ -119,6 +119,6 @@ class AppointmentPolicy
      */
     public function forceDelete(User $user, Appointment $appointment)
     {
-        //
+        return false;
     }
 }

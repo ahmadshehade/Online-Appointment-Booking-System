@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Modules\Appointments\Models\Appointment;
 use Modules\Payments\Models\Payment;
 
@@ -31,8 +32,10 @@ class PaymentService extends BaseService
      */
     public function getAll(array $filters = [])
     {
-        $data = parent::getAll($filters);
-        return $data;
+        $cahceKey = "payment.index." . md5(json_encode($filters));
+        Cache::tags('payments')->remember($cahceKey, 3600, function () use ($filters) {
+            return  parent::getAll($filters);
+        });
     }
 
     /**
@@ -55,7 +58,7 @@ class PaymentService extends BaseService
         $servicePrice = $appointment->service->price;
         $paidSoFar = $appointment->payments()->sum('amount');
         $totalPaid = $paidSoFar + $data['amount'];
-        $overAmount =  $totalPaid -$servicePrice;
+        $overAmount =  $totalPaid - $servicePrice;
         if ($totalPaid > $servicePrice) {
             throw new HttpResponseException(
                 response()->json([
@@ -64,16 +67,13 @@ class PaymentService extends BaseService
                 ])
             );
         }
-        if($overAmount==0){
-            $data['status']='completed';
+        if ($overAmount == 0) {
+            $data['status'] = 'completed';
         }
-
-    
         $payment = parent::store($data);
         $payment->partial   = $totalPaid < $servicePrice;
         $payment->remaining = max($servicePrice - $totalPaid, 0);
-        
-
+        Cache::tags('payments')->flush();
         return $payment;
     }
     /**
@@ -91,8 +91,6 @@ class PaymentService extends BaseService
         $currentUser = Auth::user();
         $newAppointmentId = $data['appointment_id'] ?? $model->appointment_id;
         $appointment = Appointment::findOrFail($newAppointmentId);
-
-
         if (!$currentUser->hasRole(UserRoles::SuperAdmin)) {
             if ($appointment->user_id !== $currentUser->id) {
                 throw new HttpResponseException(response()->json([
@@ -100,7 +98,6 @@ class PaymentService extends BaseService
                 ], 403));
             }
         }
-
         $servicePrice = $appointment->service->price;
         $paidSoFar = $appointment->payments()->where('id', '!=', $model->id)->sum('amount');
         $newAmount = $data['amount'] ?? $model->amount;
@@ -117,8 +114,7 @@ class PaymentService extends BaseService
         $payment = parent::update($data, $model);
         $payment->partial   = $totalPaid < $servicePrice;
         $payment->remaining = max($servicePrice - $totalPaid, 0);
-        
-
+        Cache::tags('payments')->flush();
         return $payment;
     }
     /**
@@ -127,6 +123,7 @@ class PaymentService extends BaseService
      */
     public function destroy(Model $model)
     {
+        Cache::tags('payments')->flush();
         return parent::destroy($model);
     }
 }

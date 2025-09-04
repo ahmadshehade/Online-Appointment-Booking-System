@@ -63,7 +63,7 @@ class ReviewPolicy
      */
     public function create(User $user)
     {
-    
+
         if (! $user->hasRole(UserRoles::Client)) {
             return false;
         }

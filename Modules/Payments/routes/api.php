@@ -1,9 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Payments\Http\Controllers\PaymentsController;
-
-
+use Modules\Payments\Http\Controllers\Api\V1\PaymentsController;
 
 Route::middleware(['auth:sanctum'])->group(function () {
     /*

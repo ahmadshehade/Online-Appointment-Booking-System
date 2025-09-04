@@ -6,6 +6,7 @@ use App\Services\Base\BaseService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Modules\Appointments\Models\Appointment;
 
 class AppointmentService extends BaseService
@@ -27,8 +28,10 @@ class AppointmentService extends BaseService
      */
     public function getAll(array $filters = [])
     {
-        $data = parent::getAll($filters);
-        return $data;
+        $cacheKey = 'Appointment.index.' . md5(json_encode($filters));
+        Cache::tags(['Appointments'])->remember($cacheKey, 3600, function () use ($filters) {
+            return Appointment::all($filters);
+        });
     }
 
     /**
@@ -47,6 +50,7 @@ class AppointmentService extends BaseService
      */
     public function store(array $data): Model|JsonResponse
     {
+        Cache::tags(['Appointments'])->flush();
         $data['user_id'] = Auth::id();
         $appointment = parent::store($data);
         return $appointment->load(['service', 'user', 'slot', 'coupons']);
@@ -60,6 +64,7 @@ class AppointmentService extends BaseService
      */
     public function update(array $data, Model $model)
     {
+        Cache::tags(['Appointments'])->flush();
         $appointment = parent::update($data, $model);
         $couponIds = $data['coupon_ids'] ?? [];
         $appointment->coupons()->sync($couponIds);
@@ -73,6 +78,7 @@ class AppointmentService extends BaseService
      */
     public  function destroy(Model $model)
     {
+        Cache::tags(['Appointments'])->flush();
         return parent::destroy($model);
     }
 }

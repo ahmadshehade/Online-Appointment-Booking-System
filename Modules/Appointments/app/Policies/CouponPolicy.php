@@ -89,16 +89,22 @@ class CouponPolicy
      * 
      * @param \App\Models\User $user
      * @param \Modules\Appointments\Models\Coupon $Coupon
-     * @return void
+     * @return bool
      */
-    public function restore(User $user, Coupon $coupon) {}
+    public function restore(User $user, Coupon $coupon)
+    {
+        return false;
+    }
 
 
     /**
      * Summary of forceDelete
      * @param \App\Models\User $user
      * @param \Modules\Appointments\Models\Coupon $Coupon
-     * @return void
+     * @return bool
      */
-    public function forceDelete(User $user, Coupon $coupon) {}
+    public function forceDelete(User $user, Coupon $coupon)
+    {
+        return false;
+    }
 }

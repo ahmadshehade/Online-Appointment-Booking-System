@@ -28,15 +28,15 @@ class ChangeAppointment implements Rule
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-     
+
         if ($user->hasRole(UserRoles::SuperAdmin->value)) {
             return true;
         }
 
 
-       if ($user->hasRole(UserRoles::Provider->value) && $user->serviceProvider) {
+        if ($user->hasRole(UserRoles::Provider->value) && $user->serviceProvider) {
             return $user->serviceProvider->availabilitySlots()
-                 ->where('id', $this->appointment->availability_slot_id)
+                ->where('id', $this->appointment->availability_slot_id)
                 ->exists();
         }
 

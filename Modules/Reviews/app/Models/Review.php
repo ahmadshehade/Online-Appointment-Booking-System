@@ -4,6 +4,7 @@ namespace Modules\Reviews\Models;
 
 use App\Enum\UserRoles;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
@@ -77,7 +78,27 @@ class Review extends Model
                 return;
             }
 
-              $query->whereRaw('0=1');
+            $query->whereRaw('0=1');
         });
+    }
+
+    /**
+     * Summary of getCreatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('y-m-d H:i:s');
+    }
+
+    /**
+     * Summary of getUpdatedAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('y-m-d H:i:s');
     }
 }

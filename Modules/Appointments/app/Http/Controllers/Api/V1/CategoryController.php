@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Appointments\Http\Controllers;
+namespace Modules\Appointments\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -27,9 +27,11 @@ class CategoryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $data = $this->categoryService->getAll();
+        $this->authorize("viewAny", Category::class);
+        $filters=$request->only(['name']);
+        $data = $this->categoryService->getAll($filters);
         return $this->successMessage([$data], 'Successfully Get All Category', 200);
     }
 

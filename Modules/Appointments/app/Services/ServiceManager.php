@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth as FacadesAuth;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+
 class ServiceManager extends BaseService
 {
 
@@ -27,51 +29,11 @@ class ServiceManager extends BaseService
      */
     public function getAll(array $filters = [])
     {
-         $query=$this->model->GetServices(Auth::user());
-         $allowedColumns=['name','description','price'];
-         return $this->getAllWithQuery($query, $filters,$allowedColumns);
+        $cacheKey = "service.index." . md5(json_encode($filters));
+        Cache::tags('serviecs')->remember($cacheKey, 3600, function () use ($filters) {
+            return parent::getAll($filters);
+        });
     }
-
-
-     /**
-      * Summary of getAllWithQuery
-      * @param mixed $query
-      * @param array $filters
-      * @param array $allowedColumns
-      */
-     protected function getAllWithQuery($query, array $filters = [], array $allowedColumns = [])
-    {
-        return $this->handle(function () use ($query, $filters, $allowedColumns) {
-
-
-            if (empty($allowedColumns)) {
-                $allowedColumns = $this->model->getConnection()
-                    ->getSchemaBuilder()
-                    ->getColumnListing($this->model->getTable());
-            }
-
-            foreach ($filters as $key => $value) {
-                if (!in_array($key, $allowedColumns)) continue;
-
-                if (is_array($value)) {
-                    $query->whereIn($key, $value);
-                } else {
-                    $query->where($key, $value);
-                }
-            }
-
-            $results = $query->get();
-
-            if ($results->isEmpty() && !empty($filters)) {
-                throw new \Illuminate\Database\Eloquent\ModelNotFoundException(
-                    "No " . $this->model::class . " records found for the given filters."
-                );
-            }
-
-            return $results;
-        }, 'getAll');
-    }
-
     /**
      * Summary of get
      * @param \Illuminate\Database\Eloquent\Model $model
@@ -88,7 +50,8 @@ class ServiceManager extends BaseService
      */
     public function store(array $data): Model|JsonResponse
     {
-        $data['service_provider_id']=Auth::user()->serviceProvider->id;
+        Cache::tags('serviecs')->flush();
+        $data['service_provider_id'] = Auth::user()->serviceProvider->id;
         return parent::store($data);
     }
 
@@ -99,6 +62,7 @@ class ServiceManager extends BaseService
      */
     public function update(array $data, Model $model)
     {
+        Cache::tags('serviecs')->flush();
         return parent::update($data, $model);
     }
 
@@ -108,6 +72,7 @@ class ServiceManager extends BaseService
      */
     public   function  destroy(Model $model)
     {
+        Cache::tags('serviecs')->flush();
         return parent::destroy($model);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Modules\Appointments\Http\Controllers;
+namespace Modules\Appointments\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -28,9 +28,9 @@ class ServiceController extends Controller
      */
     public function index(Request $request)
     {
-        $filters=$request->only(['name','description','price']);
-        $data = $this->service->getAll($filters);
-        return $this->successMessage([$data], 'Successfully Get All Services', 200);
+        $this->authorize('viewAny', Service::class);
+        $filters = $request->only(['name', 'description', 'price']);
+        return $this->successMessage([$this->service->getAll($filters)], 'Successfully Get All Services', 200);
     }
 
     /**

@@ -1,10 +1,10 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Modules\Appointments\Http\Controllers\AppointmentsController;
-use Modules\Appointments\Http\Controllers\CategoryController;
-use Modules\Appointments\Http\Controllers\CouponsController;
-use Modules\Appointments\Http\Controllers\ServiceController;
+use Modules\Appointments\Http\Controllers\Api\V1\AppointmentsController;
+use Modules\Appointments\Http\Controllers\Api\V1\CategoryController;
+use Modules\Appointments\Http\Controllers\Api\V1\CouponsController;
+use Modules\Appointments\Http\Controllers\Api\V1\ServiceController;
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
