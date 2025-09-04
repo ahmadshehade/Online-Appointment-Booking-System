@@ -15,12 +15,15 @@ use Modules\Appointments\Models\Appointment;
 use Modules\Reviews\Models\Review;
 use Modules\Users\Models\AvailabilitySlot;
 use Modules\Users\Models\ServiceProvider;
+use Spatie\Activitylog\Traits\LogsActivity;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, HasApiTokens;
+
+
 
     /**
      * The attributes that are mass assignable.

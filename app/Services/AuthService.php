@@ -4,6 +4,8 @@ namespace App\Services;
 use App\Enum\UserRoles;
 use App\Models\User;
 use Exception;
+use Illuminate\Auth\Events\Login;
+use Illuminate\Auth\Events\Logout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -41,6 +43,7 @@ class AuthService {
             $user=User::where('email',$data['email'])->firstOrFail();
             if($user && Hash::check($data['password'], $user->password)){
                 $token = $user->createToken('auth_user')->plainTextToken;
+                event(new Login('web', $user, false));
                 return [
                     'user'=>$user,
                     'token'=>$token
@@ -68,6 +71,7 @@ class AuthService {
              $user->currentAccessToken()->delete();
 
         }
+        event(new Logout('web', $user));
         return true;
     }
 
