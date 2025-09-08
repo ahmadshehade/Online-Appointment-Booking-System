@@ -2,12 +2,17 @@
 
 namespace App\Services;
 
+use App\Events\Permissions\AssignPermissionEvent;
+use App\Events\Permissions\RemovePermissionEvent;
+use App\Events\Roles\AssignRoleEvent;
+use App\Events\Roles\RemoveRoleEvent;
 use App\Models\User;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleAndPermissionService
 {
+
     /**
      * Summary of assignRoleToUser
      * @param \App\Models\User $user
@@ -17,6 +22,7 @@ class RoleAndPermissionService
     public function assignRoleToUser(User $user, Role $role): bool
     {
         $user->assignRole($role->name);
+        event(new AssignRoleEvent($user));
         return $user->hasRole($role->name);
     }
 
@@ -29,6 +35,7 @@ class RoleAndPermissionService
     public function removeRoleFromUser(User $user, Role $role): bool
     {
         $user->removeRole($role->name);
+        event(new RemoveRoleEvent($user));
         return !$user->hasRole($role->name);
     }
 
@@ -40,7 +47,8 @@ class RoleAndPermissionService
      */
     public function assignPermissionToUser(User $user, Permission $permission): bool
     {
-        $user->givePermissionTo($permission->name);
+        $user->givePermissionTo(permissions: $permission->name);
+        event(new AssignPermissionEvent($user));
         return $user->can($permission->name);
     }
 
@@ -53,6 +61,7 @@ class RoleAndPermissionService
     public function removePermissionFromUser(User $user, Permission $permission): bool
     {
         $user->revokePermissionTo($permission->name);
+        event(new RemovePermissionEvent($user));
         return !$user->can($permission->name);
     }
 

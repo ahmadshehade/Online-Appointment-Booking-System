@@ -23,11 +23,11 @@ class AuthController extends Controller
         $this->authentication=$authentication;
      }
 
+ 
      /**
-      * Undocumented function
-      *
-      * @param RegisterRequest $request
-      * @return void
+      * Summary of register
+      * @param \App\Http\Requests\Auth\RegisterRequest $request
+      * @return \Illuminate\Http\JsonResponse
       */
      public function register(RegisterRequest $request){
          $data=$this->authentication->register($request->validated());
@@ -35,21 +35,22 @@ class AuthController extends Controller
      }
 
 
+
      /**
-      * Undocumented function
-      *
-      * @param LoginRequest $request
-      * @return void
+      * Summary of login
+      * @param \App\Http\Requests\Auth\LoginRequest $request
+      * @return \Illuminate\Http\JsonResponse
       */
      public function login(LoginRequest $request){
         $data=$this->authentication->login($request->validated());
         return $this->successMessage([$data],'Successfully Login',200);
      }
 
+
      /**
-      * Undocumented function
-      *
-      * @return void
+      * Summary of logout
+      * @param mixed $all
+      * @return \Illuminate\Http\JsonResponse
       */
      public function logout($all=null){
 
