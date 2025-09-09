@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\User;
 
+use App\Notifications\BaseNotification;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Hash;
 
@@ -17,7 +18,15 @@ class UserService
      */
     public  function  destroy(User $user)
     {
-        return  $user->delete();
+        $user->notifyNow(new BaseNotification(
+            'Remove User',
+            'Admin removed you from the system.',
+            '',
+            [],
+            ['mail']
+        ));
+
+        return $user->delete();
     }
 
 
@@ -31,7 +40,7 @@ class UserService
     public function update(User $user, array $data)
     {
         try {
-            if($data["password"]) {
+            if ($data["password"]) {
                 $data["password"] = Hash::make($data["password"]);
             }
             $user->update($data);

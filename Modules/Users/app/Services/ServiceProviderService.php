@@ -2,6 +2,7 @@
 
 namespace Modules\Users\Services;
 
+use App\Notifications\BaseNotification;
 use App\Services\Base\BaseService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -61,9 +62,17 @@ class ServiceProviderService extends BaseService
                 403
             ));
         }
+
         $data['user_id'] = Auth::user()->id;
         $serviceProvider = parent::store($data);
         Cache::tags(['service_providers'])->flush();
+        Auth::user()->notify(new BaseNotification(
+            'Providers',
+            'Successfully Join In Providers',
+            '',
+            [],
+            ['mail']
+        ));
         return $serviceProvider;
     }
 
@@ -77,6 +86,13 @@ class ServiceProviderService extends BaseService
     {
 
         Cache::tags('service_providers')->flush();
+        Auth::user()->notify(new BaseNotification(
+            'Providers',
+            'Successfully Update Your Provider',
+            '',
+            [],
+            ['mail']
+        ));
         return parent::update($data, $model);
     }
 
