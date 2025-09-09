@@ -2,12 +2,15 @@
 
 namespace Modules\Appointments\Services;
 
+use App\Notifications\BaseNotification;
 use App\Services\Base\BaseService;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Modules\Appointments\Models\Appointment;
+use Modules\Appointments\Models\Coupon;
 
 class AppointmentService extends BaseService
 {
@@ -53,6 +56,13 @@ class AppointmentService extends BaseService
         Cache::tags(['Appointments'])->flush();
         $data['user_id'] = Auth::id();
         $appointment = parent::store($data);
+        Auth::user()->notify(new BaseNotification(
+            'Appointments',
+            'Successfully Add New Appointment',
+            '',
+            [],
+            ['mail']
+        ));
         return $appointment->load(['service', 'user', 'slot', 'coupons']);
     }
 
@@ -65,9 +75,22 @@ class AppointmentService extends BaseService
     public function update(array $data, Model $model)
     {
         Cache::tags(['Appointments'])->flush();
+
         $appointment = parent::update($data, $model);
+
         $couponIds = $data['coupon_ids'] ?? [];
+  
+
         $appointment->coupons()->sync($couponIds);
+
+        $appointment->user->notify(new BaseNotification(
+            'Appointments',
+            "Successfully updated appointment #{$appointment->id}",
+            '',
+            [],
+            ['mail']
+        ));
+
         return $appointment->load(['service', 'user', 'slot', 'coupons']);
     }
 

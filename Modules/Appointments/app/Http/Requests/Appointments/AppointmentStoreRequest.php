@@ -7,6 +7,8 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Modules\Appointments\Models\Appointment;
+use Modules\Appointments\Models\Service;
+use Modules\Users\Models\AvailabilitySlot;
 
 class AppointmentStoreRequest extends FormRequest
 {
@@ -61,4 +63,26 @@ class AppointmentStoreRequest extends FormRequest
     {
         return Gate::allows('create', Appointment::class);
     }
+
+   public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $serviceId = $this->input('service_id');
+            $slotId = $this->input('availability_slot_id');
+
+            $service = Service::find($serviceId);
+            $slot = AvailabilitySlot::find($slotId);
+
+            if ($service && $slot) {
+                
+                if ($slot->service_provider_id !== $service->service_provider_id) {
+                    $validator->errors()->add(
+                        'availability_slot_id',
+                        'The selected availability slot does not belong to the service provider of this service.'
+                    );
+                }
+            }
+        });
+    }
+
 }

@@ -2,6 +2,8 @@
 
 namespace Modules\Appointments\Services;
 
+use App\Models\User;
+use App\Notifications\BaseNotification;
 use  App\Services\Base\BaseService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
@@ -21,7 +23,7 @@ class CategoryService  extends BaseService
 
     public function getAll(array $filters = [])
     {
-        $cacheKey = 'categories.index.'.md5(json_encode($filters));
+        $cacheKey = 'categories.index.' . md5(json_encode($filters));
         $cacheTTL = 3600;
         return Cache::tags('categories')->remember($cacheKey, $cacheTTL, function () use ($filters) {
             return parent::getAll($filters);
@@ -44,7 +46,18 @@ class CategoryService  extends BaseService
     public function store(array $data): Model|\Illuminate\Http\JsonResponse
     {
         Cache::tags('categories')->flush();
-        return  parent::store($data);
+        $users = User::all();
+        $category = parent::store($data);
+        foreach ($users as $user) {
+            $user->notify(new BaseNotification(
+                'Categories',
+                "Successfully Add New Category: {{$category->name}}",
+                '',
+                [],
+                ['mail']
+            ));
+        }
+        return $category;
     }
 
     /**
@@ -55,7 +68,18 @@ class CategoryService  extends BaseService
     public function update(array $data, Model $model)
     {
         Cache::tags('categories')->flush();
-        return parent::update($data, $model);
+        $category= parent::update($data, $model);
+         $users=User::all();
+           foreach ($users as $user) {
+            $user->notify(new BaseNotification(
+                'Categories',
+                "Successfully Update Category: {{$category->name}}",
+                '',
+                [],
+                ['mail']
+            ));
+        }
+        return $category;
     }
 
     /**

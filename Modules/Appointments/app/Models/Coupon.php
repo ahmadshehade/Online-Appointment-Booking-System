@@ -27,7 +27,7 @@ class Coupon extends Model
     ];
 
     protected $casts = [
-        'expires_at' => 'date'
+        'expires_at' => 'datetime'
     ];
 
 
@@ -75,6 +75,16 @@ class Coupon extends Model
      * @return string
      */
     public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y-m-d');
+    }
+
+    /**
+     * Summary of getExpiresAtAttribute
+     * @param mixed $value
+     * @return string
+     */
+    public function getExpiresAtAttribute($value)
     {
         return Carbon::parse($value)->format('Y-m-d');
     }

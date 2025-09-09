@@ -2,6 +2,8 @@
 
 namespace Modules\Appointments\Services;
 
+use App\Models\User;
+use App\Notifications\BaseNotification;
 use App\Services\Base\BaseService;
 
 use Modules\Appointments\Models\Service;
@@ -51,8 +53,20 @@ class ServiceManager extends BaseService
     public function store(array $data): Model|JsonResponse
     {
         Cache::tags('serviecs')->flush();
-        $data['service_provider_id'] = Auth::user()->serviceProvider->id;
-        return parent::store($data);
+         $data['service_provider_id'] = Auth::user()->serviceProvider->id;
+        $service = parent::store($data);
+        $users = User::all();
+        foreach ($users as $user) {
+            $user->notify(new BaseNotification(
+                'Services',
+                "Successfully Add Service: {{$service->name}}",
+                '',
+                [],
+                ['mail']
+            ));
+        }
+       
+        return $service;
     }
 
     /**
@@ -63,7 +77,18 @@ class ServiceManager extends BaseService
     public function update(array $data, Model $model)
     {
         Cache::tags('serviecs')->flush();
-        return parent::update($data, $model);
+        $service = parent::update($data, $model);
+        $users = User::all();
+        foreach ($users as $user) {
+            $user->notify(new BaseNotification(
+                'Services',
+                "Successfully update Service: {{$service->name}}",
+                '',
+                [],
+                ['mail']
+            ));
+        }
+        return $service;
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Modules\Appointments\Services;
 
+use App\Models\User;
+use App\Notifications\BaseNotification;
 use App\Services\Base\BaseService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -29,6 +31,16 @@ class CouponsService extends BaseService
     {
         $data['service_provider_id'] = Auth::user()->serviceProvider->id;
         $coupon = parent::store($data);
+        $users = User::all();
+        foreach ($users as $user) {
+            $user->notify(new BaseNotification(
+                'Coupon',
+                "Successfully Add Coupon: {{$coupon->code}}",
+                '',
+                [],
+                ['mail']
+            ));
+        }
         Cache::tags(['coupons'])->flush();
 
         return $coupon;
@@ -43,9 +55,17 @@ class CouponsService extends BaseService
     public function update(array $data, Model $model): Model
     {
         $coupon = parent::update($data, $model);
-
         Cache::tags(['coupons'])->flush();
-
+        $users = User::all();
+        foreach ($users as $user) {
+            $user->notify(new BaseNotification(
+                'Coupon',
+                "Successfully Update Coupon: {{$coupon->code}}",
+                '',
+                [],
+                ['mail']
+            ));
+        }
         return $coupon->load(['serviceProvider', 'serviceProvider.user']);
     }
 
